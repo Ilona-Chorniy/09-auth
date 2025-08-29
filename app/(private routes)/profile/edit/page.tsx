@@ -21,11 +21,6 @@ export default function EditProfilePage() {
     async function fetchUser() {
       try {
         const currentUser: User = await getMe()
-        if (!currentUser) {
-          setError('User not found')
-          setLoading(false)
-          return
-        }
         setUser(currentUser)
         setUsername(currentUser.username)
         setEmail(currentUser.email)
@@ -44,7 +39,7 @@ export default function EditProfilePage() {
     if (!user) return
     try {
       await updateUsername({ username })
-      setUser({ ...user, username })
+      setUser({ ...user, username }) 
       router.push('/profile')
     } catch {
       setError('Failed to update username')

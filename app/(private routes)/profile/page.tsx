@@ -1,32 +1,32 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import css from './ProfilePage.module.css'
-import { Metadata } from 'next'
-import { getServerMe } from '@/lib/api/serverApi'
+import { getMe } from '@/lib/api/clientApi'
+import { User } from '@/types/user'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const user = await getServerMe()
-  return {
-    title: `User: ${user.username} | NoteHub`,
-    description: `Profile page of ${user.username} in NoteHub app`,
-    openGraph: {
-      title: `NoteHub Profile: ${user.username}`,
-      description: `Check ${user.username}'s profile on NoteHub`,
-        url: 'https://09-auth-phi-teal.vercel.app',
-      images: [
-        {
-          url: user.avatar || 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-          width: 1200,
-          height: 630,
-          alt: 'User Profile Image',
-        },
-      ],
-    },
-  }
-}
+export default function ProfilePage() {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
-const ProfilePage = async () => {
-  const user = await getServerMe()
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const currentUser: User = await getMe()
+        setUser(currentUser)
+      } catch {
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchUser()
+  }, [])
+
+  if (loading) return <p>Loading...</p>
+  if (!user) return <p>User not found</p>
 
   return (
     <main className={css.mainContent}>
@@ -56,5 +56,3 @@ const ProfilePage = async () => {
     </main>
   )
 }
-
-export default ProfilePage

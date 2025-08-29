@@ -6,6 +6,7 @@ import css from './SignInPage.module.css'
 import { loginUser } from '@/lib/api/clientApi'
 import { AxiosError } from 'axios'
 import { useAuthStore } from '@/lib/store/authStore'
+import { User } from '@/types/user'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -17,8 +18,8 @@ export default function SignInPage() {
   const handleLogin = async (email: string, password: string) => {
     setError('')
     try {
-      const userData = await loginUser({ email, password })
-      setUser({ email: userData.email })
+      const userData: User = await loginUser({ email, password })
+      setUser(userData)
       router.push('/profile')
     } catch (err) {
       if (err instanceof AxiosError) {

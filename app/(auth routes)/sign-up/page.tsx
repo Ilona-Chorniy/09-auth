@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import css from './SignUpPage.module.css'
 import { useAuthStore } from '@/lib/store/authStore'
+import { User } from '@/types/user'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -17,7 +18,7 @@ export default function SignUpPage() {
   const handleRegister = async (email: string, password: string) => {
     setError('')
     try {
-      const userData = await registerUser({ email, password })
+      const userData: User = await registerUser({ email, password })
       setUser(userData)
       router.push('/profile')
     } catch (err) {
