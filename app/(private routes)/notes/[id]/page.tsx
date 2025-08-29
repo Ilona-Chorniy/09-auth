@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/api";
+import { fetchNoteById } from "@/lib/api/clientApi";
 import NoteDetailsClient from "./NoteDetails.client";
 import { Metadata } from "next";
 
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       ? note.content.substring(0, 150).trim() + "..."
       : note.content;
 
-    const pageUrl = `https://08-zustand-smoky.vercel.app/notes/${id}`;
+    const pageUrl = `https://09-auth-phi-teal.vercel.app/notes/${id}`;
 
     return {
       title: note.title,

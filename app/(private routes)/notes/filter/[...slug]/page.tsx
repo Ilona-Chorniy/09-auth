@@ -1,6 +1,6 @@
 import NotesClient from "./Notes.client";
-import { fetchNotes } from "@/lib/api";
-import type { FetchNotesResponse } from "@/lib/api";
+import { fetchNotes } from "@/lib/api/clientApi";
+import type { FetchNotesResponse } from "@/lib/api/clientApi";
 import { NoteTag } from "@/types/note";
 import type { Metadata } from 'next';
 
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: NotesPageProps): Promise<Meta
     openGraph: {
       title: `NoteHub – Notes with filter: ${tag}`,
       description: `Review notes filtered by tag: ${tag}`,
-      url: `https://08-zustand-smoky.vercel.app/notes/filter/${resolvedParams.slug?.join('/') ?? ''}`,
+      url: `https://09-auth-phi-teal.vercel.app/notes/filter/${resolvedParams.slug?.join('/') ?? ''}`,
       images: [
         {
           url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',

@@ -1,0 +1,104 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import css from './EditProfilePage.module.css'
+import { getMe, updateUsername } from '@/lib/api/clientApi'
+import { User } from '@/types/user'
+
+export default function EditProfilePage() {
+  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [avatar, setAvatar] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const currentUser = await getMe()
+        if (!currentUser) {
+          setError('User not found')
+          return
+        }
+        setUser(currentUser)
+        setUsername(currentUser.username || '')
+        setEmail(currentUser.email || '')
+        setAvatar(currentUser.avatar || '')
+      } catch {
+        setError('Failed to load user data')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchUser()
+  }, [])
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    if (!user) return
+    try {
+      await updateUsername({ username })
+      router.push('/profile')
+    } catch {
+      setError('Failed to update username')
+    }
+  }
+
+  const handleCancel = () => {
+    router.push('/profile')
+  }
+
+  if (loading) return <p>Loading...</p>
+  if (error && !user) return <p className={css.error}>{error}</p>
+  if (!user) return null
+
+  return (
+    <main className={css.mainContent}>
+      <div className={css.profileCard}>
+        <h1 className={css.formTitle}>Edit Profile</h1>
+
+        {avatar && (
+          <Image
+            src={avatar}
+            alt="User Avatar"
+            width={120}
+            height={120}
+            className={css.avatar}
+          />
+        )}
+
+        <form className={css.profileInfo} onSubmit={handleSave}>
+          <div className={css.usernameWrapper}>
+            <label htmlFor="username">Username:</label>
+            <input
+              id="username"
+              type="text"
+              className={css.input}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <p>Email: {email}</p>
+
+          <div className={css.actions}>
+            <button type="submit" className={css.saveButton}>
+              Save
+            </button>
+            <button type="button" className={css.cancelButton} onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+
+          {error && <p className={css.error}>{error}</p>}
+        </form>
+      </div>
+    </main>
+  )
+}
