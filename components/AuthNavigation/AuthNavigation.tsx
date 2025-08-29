@@ -15,8 +15,8 @@ export default function AuthNavigation() {
   }, [loadUser])
 
   const handleLogout = async () => {
-    await logout()           
-    router.push('/sign-in') 
+    await logout()
+    router.push('/sign-in')
   }
 
   return (
@@ -29,7 +29,7 @@ export default function AuthNavigation() {
             </Link>
           </li>
           <li className={css.navigationItem}>
-            <p className={css.userEmail}>{user?.email}</p>
+            <p className={css.userEmail}>{user?.username || user?.email}</p>
             <button onClick={handleLogout} className={css.logoutButton}>
               Logout
             </button>

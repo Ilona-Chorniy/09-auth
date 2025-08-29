@@ -1,15 +1,16 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import css from './EditProfilePage.module.css'
 import { getMe, updateUsername } from '@/lib/api/clientApi'
+import { useAuthStore } from '@/lib/store/authStore'
 import { User } from '@/types/user'
 
 export default function EditProfilePage() {
   const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
+  const { user, setUser } = useAuthStore()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [avatar, setAvatar] = useState('')
@@ -19,14 +20,15 @@ export default function EditProfilePage() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const currentUser = await getMe()
+        const currentUser: User = await getMe()
         if (!currentUser) {
           setError('User not found')
+          setLoading(false)
           return
         }
         setUser(currentUser)
-        setUsername(currentUser.username || '')
-        setEmail(currentUser.email || '')
+        setUsername(currentUser.username)
+        setEmail(currentUser.email)
         setAvatar(currentUser.avatar || '')
       } catch {
         setError('Failed to load user data')
@@ -35,14 +37,14 @@ export default function EditProfilePage() {
       }
     }
     fetchUser()
-  }, [])
+  }, [setUser])
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError('')
     if (!user) return
     try {
       await updateUsername({ username })
+      setUser({ ...user, username })
       router.push('/profile')
     } catch {
       setError('Failed to update username')

@@ -1,9 +1,8 @@
 import { create } from 'zustand'
 import { getMe, logoutUser } from '@/lib/api/clientApi'
+import { User } from '@/types/user'
 
-interface User {
-  email: string
-}
+
 
 interface AuthState {
   isAuthenticated: boolean
