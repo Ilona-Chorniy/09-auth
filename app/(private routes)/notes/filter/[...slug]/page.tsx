@@ -1,5 +1,5 @@
 import NotesClient from "./Notes.client";
-import { fetchNotes } from "@/lib/api/clientApi";
+import { fetchNotesServer } from "@/lib/api/serverApi";
 import type { FetchNotesResponse } from "@/lib/api/clientApi";
 import { NoteTag } from "@/types/note";
 import type { Metadata } from 'next';
@@ -42,7 +42,7 @@ export default async function NotesPage({ params }: NotesPageProps) {
   let initialData: FetchNotesResponse;
 
   try {
-    initialData = await fetchNotes({
+    initialData = await fetchNotesServer({ 
       page: 1,
       perPage: 12,
       ...(tag ? { tag } : {})

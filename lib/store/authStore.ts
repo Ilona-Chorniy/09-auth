@@ -2,8 +2,6 @@ import { create } from 'zustand'
 import { getMe, logoutUser } from '@/lib/api/clientApi'
 import { User } from '@/types/user'
 
-
-
 interface AuthState {
   isAuthenticated: boolean
   user: User | null
@@ -12,7 +10,7 @@ interface AuthState {
   loadUser: () => Promise<void>
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>()((set) => ({
   isAuthenticated: false,
   user: null,
 

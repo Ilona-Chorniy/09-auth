@@ -1,41 +1,31 @@
 'use client'
 
-import React, { useEffect, useState, ReactNode } from 'react'
+import React, { useEffect, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { getMe } from '@/lib/api/clientApi'
+import { useAuthStore } from '@/lib/store/authStore'
+import { getSession } from '@/lib/api/clientApi'
 
 interface AuthProviderProps {
   children: ReactNode
-  requireAuth?: boolean 
+  requireAuth?: boolean
 }
 
 export default function AuthProvider({ children, requireAuth = false }: AuthProviderProps) {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { setUser } = useAuthStore()
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await getMe() 
-        setIsAuthenticated(true)
+        const user = await getSession()
+        setUser(user)
       } catch {
-        setIsAuthenticated(false)
+        setUser(null)
         if (requireAuth) router.push('/sign-in')
-      } finally {
-        setIsLoading(false)
       }
     }
     checkAuth()
-  }, [requireAuth, router])
-
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
-
-  if (requireAuth && !isAuthenticated) {
-    return null 
-  }
+  }, [requireAuth, router, setUser])
 
   return <>{children}</>
 }

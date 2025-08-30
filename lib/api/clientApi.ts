@@ -54,32 +54,36 @@ interface LoginData { email: string; password: string }
 interface UpdateUsernameData { username: string }
 
 export async function registerUser(data: RegisterData) {
-  const res = await api.post('/auth/register', data, { withCredentials: true })
+  const res = await api.post('/auth/register', data)
   return res.data
 }
 
 export async function loginUser(data: LoginData) {
-  const res = await api.post('/auth/login', data, { withCredentials: true })
+  const res = await api.post('/auth/login', data)
   return res.data
 }
 
 export async function getMe(): Promise<User> {
   try {
-    const res = await api.get<User>('/users/me', { withCredentials: true })
+    const res = await api.get<User>('/users/me')
     return res.data
   } catch {
     throw new Error('User is not authenticated')
   }
 }
 
+export async function getSession(): Promise<User> {
+  return getMe()
+}
+
 export async function updateUsername(data: UpdateUsernameData) {
-  const res = await api.patch('/users/me', data, { withCredentials: true })
+  const res = await api.patch('/users/me', data)
   return res.data
 }
 
 export async function logoutUser() {
   try {
-    await api.post('/auth/logout', {}, { withCredentials: true })
+    await api.post('/auth/logout', {})
     return true
   } catch {
     return false

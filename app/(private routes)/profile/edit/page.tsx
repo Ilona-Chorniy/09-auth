@@ -1,58 +1,59 @@
 'use client'
 
-import { useEffect, useState, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
-import css from './EditProfilePage.module.css'
-import { getMe, updateUsername } from '@/lib/api/clientApi'
-import { useAuthStore } from '@/lib/store/authStore'
-import { User } from '@/types/user'
+import { useEffect, useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import css from './EditProfilePage.module.css';
+import { getMe, updateUsername } from '@/lib/api/clientApi';
+import { useAuthStore } from '@/lib/store/authStore';
+import { User } from '@/types/user';
 
 export default function EditProfilePage() {
-  const router = useRouter()
-  const { user, setUser } = useAuthStore()
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [avatar, setAvatar] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
+  const router = useRouter();
+  const { user, setUser } = useAuthStore();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUser() {
       try {
-        const currentUser: User = await getMe()
-        setUser(currentUser)
-        setUsername(currentUser.username)
-        setEmail(currentUser.email)
-        setAvatar(currentUser.avatar || '')
+        const currentUser: User = await getMe();
+        setUser(currentUser);
+        setUsername(currentUser.username);
+        setEmail(currentUser.email);
+        setAvatar(currentUser.avatar || '');
       } catch {
-        setError('Failed to load user data')
+        setError('Failed to load user data');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchUser()
-  }, [setUser])
+    fetchUser();
+  }, [setUser]);
 
   const handleSave = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!user) return
+    e.preventDefault();
+    if (!user) return;
+
+    setError('');
     try {
-      await updateUsername({ username })
-      setUser({ ...user, username }) 
-      router.push('/profile')
+      await updateUsername({ username });
+      setUser({ ...user, username });
+      router.push('/profile');
     } catch {
-      setError('Failed to update username')
+      setError('Failed to update username');
     }
-  }
+  };
 
   const handleCancel = () => {
-    router.push('/profile')
-  }
+    router.push('/profile');
+  };
 
-  if (loading) return <p>Loading...</p>
-  if (error && !user) return <p className={css.error}>{error}</p>
-  if (!user) return null
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p className={css.error}>{error || 'User not found'}</p>;
 
   return (
     <main className={css.mainContent}>
@@ -97,5 +98,5 @@ export default function EditProfilePage() {
         </form>
       </div>
     </main>
-  )
+  );
 }

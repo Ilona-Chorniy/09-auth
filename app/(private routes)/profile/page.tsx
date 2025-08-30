@@ -1,32 +1,51 @@
-'use client'
+import Image from 'next/image';
+import Link from 'next/link';
+import css from './ProfilePage.module.css';
+import { getServerMe } from '@/lib/api/serverApi';
+import type { User } from '@/types/user';
+import type { Metadata } from 'next';
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import css from './ProfilePage.module.css'
-import { getMe } from '@/lib/api/clientApi'
-import { User } from '@/types/user'
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await getServerMe();
 
-export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  if (!user) {
+    return {
+      title: 'Profile | NoteHub',
+      description: 'View your profile on NoteHub',
+    };
+  }
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const currentUser: User = await getMe()
-        setUser(currentUser)
-      } catch {
-        setUser(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchUser()
-  }, [])
+  return {
+    title: `${user.username} – My NoteHub Profile`,
+    description: `Check out ${user.username}'s profile on NoteHub`,
+    openGraph: {
+      title: `Profile of ${user.username}`,
+      description: `Check out ${user.username}'s profile on NoteHub`,
+      url: 'https://09-auth-phi-teal.vercel.app/profile',
+      images: [
+        {
+          url: user.avatar || 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${user.username} Avatar`,
+        },
+      ],
+    },
+  };
+}
 
-  if (loading) return <p>Loading...</p>
-  if (!user) return <p>User not found</p>
+export default async function ProfilePage() {
+  let user: User | null = null;
+
+  try {
+    user = await getServerMe();
+  } catch (error) {
+    console.error('Error fetching user:', error);
+  }
+
+  if (!user) {
+    return <p>User not found</p>;
+  }
 
   return (
     <main className={css.mainContent}>
@@ -54,5 +73,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </main>
-  )
+  );
 }

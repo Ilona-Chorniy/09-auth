@@ -2,6 +2,7 @@ import { api } from './api'
 import type { Note, NoteTag } from '@/types/note'
 import { User } from '@/types/user'
 import { cookies } from 'next/headers'
+import type { AxiosResponse } from 'axios'
 
 export interface FetchNotesParams {
   page?: number
@@ -60,4 +61,13 @@ export async function deleteNoteServer(id: string): Promise<Note> {
 export async function getServerMe(): Promise<User> {
   const res = await api.get<User>('/users/me', { headers: { Cookie: getCookieHeader() } })
   return res.data
+}
+export const getServerSession = async (): Promise<AxiosResponse> => {
+  const cookieStore = cookies()
+  const res = await api.get('/auth/session', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  })
+  return res
 }

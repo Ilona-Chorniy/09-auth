@@ -5,7 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import QueryProvider from "@/components/TanStackProvider/TanStackProvider";
-
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
 
 const roboto = Roboto({
   subsets: ['latin'], 
@@ -20,12 +20,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "NoteHub - Your notes online",
     description: "NoteHub – save, edit and organise your notes quickly and conveniently.",
-    images: [{
-      url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-      alt: 'NoteHub',
-      width: 1200,
-      height: 630,
-  }]
+    images: [
+      {
+        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        alt: 'NoteHub',
+        width: 1200,
+        height: 630,
+      }
+    ]
   }
 };
 
@@ -39,14 +41,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.variable}`}>
-        <QueryProvider>
-        <Header/>
-        {children}
-        {modal}
-        <Footer/>
-        </QueryProvider>
+        <AuthProvider requireAuth={false}>
+          <QueryProvider>
+            <Header />
+            {children}
+            {modal}
+            <Footer />
+          </QueryProvider>
+        </AuthProvider>
         <div id="modal-root" />
-        
       </body>
     </html>
   );
